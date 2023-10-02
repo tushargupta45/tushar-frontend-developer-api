@@ -22,10 +22,14 @@ router.get("", async (req, res) => {
     }
   }
   const url = `https://api.spacexdata.com/v3/capsules${launchTypeUrl}?${query}`;
+  let count = 0;
   await fetch(url)
-    .then((res) => res.json())
+    .then((res) => {
+      count = res.headers.get("spacex-api-count");
+      return res.json();
+    })
     .then((obj) => {
-      res.send(obj);
+      res.send({ results: obj, count: count });
     })
     .catch((err) =>
       res.status(400).send({
